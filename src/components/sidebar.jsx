@@ -1,6 +1,5 @@
 import { useState, useContext, createContext } from "react";
 import { TbMenu2 } from "react-icons/tb";
-import { ImStatsBars } from "react-icons/im";
 
 const SidebarContext = createContext();
 
@@ -8,7 +7,11 @@ function Sidebar({ children }) {
   const [expanded, setExpanded] = useState(true);
 
   return (
-    <aside className={`h-screen ${expanded ? "w-64" : "w-20"} transition-all duration-300`}>
+    <aside className={`h-screen ${expanded ? "w-64" : "w-20"} transition-all duration-300`}
+      onClick={(item) => {
+        navigate(item.key);
+      }}
+    >
       <nav className="h-full flex flex-col bg-[#6EBBCE] border-r shadow-sm">
         <div className="p-4 pb-2 flex justify-between items-center">
           <button
@@ -26,6 +29,7 @@ function Sidebar({ children }) {
         <div className="border-t flex p-3">
              <div
                 className={`
+                pb-12
                 flex justify-between items-center
                 overflow-hidden transition-all ${expanded ? "w-52 ml-3" : "w-0"}
             `}

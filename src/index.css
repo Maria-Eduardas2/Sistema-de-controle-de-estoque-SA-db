@@ -31,3 +31,13 @@ h1 {
 h2 {
   font-family: 'titillium';
 }
+
+/* em seu arquivo CSS */
+.ant-table-thead > tr > th {
+  background-color: #6EBBCE !important;
+  color: #FFFDF4 !important;
+  font-weight: bold;
+  font-style: bold;
+  font-family: 'titillium';
+  font-size: 18px;
+} 
