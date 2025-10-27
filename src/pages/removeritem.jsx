@@ -13,7 +13,11 @@ function Deletar() {
         </Typography.Title>
       </div>
 
+<<<<<<< HEAD
       <div className="flex justify-center items-center p-4">
+=======
+      <div className="flex justify-center items-center p-20">
+>>>>>>> 83757ab01048e3fe68caadca1e4dfb24dadf343d
         <div className="w-full bg-[#FFFDF4] p-9 rounded shadow-md">
           <Form layout="vertical" onFinish={onFinish}>
             <Form.Item

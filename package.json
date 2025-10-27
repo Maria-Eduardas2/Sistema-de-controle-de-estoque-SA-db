@@ -11,7 +11,10 @@
   },
   "dependencies": {
     "antd": "^5.27.6",
+<<<<<<< HEAD
     "axios": "^1.13.0",
+=======
+>>>>>>> 83757ab01048e3fe68caadca1e4dfb24dadf343d
     "lucide-react": "^0.546.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",

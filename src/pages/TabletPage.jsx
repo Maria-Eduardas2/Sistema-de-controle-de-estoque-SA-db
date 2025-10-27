@@ -1,5 +1,8 @@
 import { Typography, Form, Input, Button } from "antd";
+<<<<<<< HEAD
 import fflogo from "../assets/fflogo.png";
+=======
+>>>>>>> 83757ab01048e3fe68caadca1e4dfb24dadf343d
 
 function TabletPage() {
   const onFinish = (values) => {
@@ -44,14 +47,20 @@ function TabletPage() {
 
           <div className="flex justify-between mt-6">
             <Button
+<<<<<<< HEAD
               type="primary"
+=======
+>>>>>>> 83757ab01048e3fe68caadca1e4dfb24dadf343d
               className="bg-[#6EBBCE] text-white rounded-none hover:bg-[#58AAB9] w-[48%]"
               htmlType="submit"
             >
               Retirar
             </Button>
             <Button
+<<<<<<< HEAD
               type="primary"
+=======
+>>>>>>> 83757ab01048e3fe68caadca1e4dfb24dadf343d
               className="bg-[#6EBBCE] text-white rounded-none hover:bg-[#58AAB9] w-[48%]"
               htmlType="submit"
             >
@@ -61,6 +70,7 @@ function TabletPage() {
         </Form>
       </div>
 
+<<<<<<< HEAD
 
       <div className="flex items-center mt-10">
         <span className=" text-2xl font-bold text-white font-titillium">
@@ -69,6 +79,9 @@ function TabletPage() {
         <img src={fflogo} alt="Logo" className="w-12 h-12 mr-2" />
       </div>
 
+=======
+      <div className="mt-10 text-2xl font-bold text-white font-light text-sm font-titillium">FiveFull</div>
+>>>>>>> 83757ab01048e3fe68caadca1e4dfb24dadf343d
     </div>
   );
 }
