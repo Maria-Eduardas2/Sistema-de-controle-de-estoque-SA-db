@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { BrowserRouter } from "react-router-dom";
 import { useNavigate } from "react-router-dom"; 
 import PageContent from "./components/pageContent";
 import Appheader from "../src/components/header";
@@ -8,6 +9,7 @@ import {
   IoAddCircleOutline,
   IoCalendar,
 } from "react-icons/io5";
+import { FaWrench } from "react-icons/fa6";
 import { ImStatsBars } from "react-icons/im";
 import { MdDelete } from "react-icons/md";
 
@@ -40,6 +42,15 @@ function App() {
             }}
           />
           <SidebarItem
+            icon={<FaWrench size={20} />}
+            text="Manutenções"
+            active={activeItem === "Manutenções"}
+            onClick={() => {
+              setActiveItem("Manutenções");
+              navigate("/manutencoes"); 
+            }}
+          />
+          <SidebarItem
             icon={<IoCalendar size={20} />}
             text="Reservar"
             active={activeItem === "Reservar"}
@@ -50,7 +61,7 @@ function App() {
           />
           <SidebarItem
             icon={<IoAddCircleOutline size={20} />}
-            text="Cadastrar"
+            text="Registrar"
             active={activeItem === "Cadastrar"}
             onClick={() => {
               setActiveItem("Cadastrar");
@@ -59,7 +70,7 @@ function App() {
           />
           <SidebarItem
             icon={<MdDelete size={20} />}
-            text="Deletar"
+            text="Remover"
             active={activeItem === "Deletar"}
             onClick={() => {
               setActiveItem("Deletar");
