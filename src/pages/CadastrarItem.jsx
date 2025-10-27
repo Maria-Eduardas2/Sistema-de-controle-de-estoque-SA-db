@@ -16,11 +16,7 @@ function CadastroDinamico() {
         </Typography.Title>
       </div>
 
-<<<<<<< HEAD
       <div className="flex justify-center items-center p-4">
-=======
-      <div className="flex justify-center items-center p-20">
->>>>>>> 83757ab01048e3fe68caadca1e4dfb24dadf343d
          <div className="w-full bg-[#FFFDF4] p-9 rounded shadow-md ">
             <Select
               className="font-bold text-sm font-titillium color-[#345DBD]

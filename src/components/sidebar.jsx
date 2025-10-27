@@ -1,8 +1,5 @@
 import { useState, useContext, createContext } from "react";
-<<<<<<< HEAD
 import fflogo from "../assets/fflogo.png";
-=======
->>>>>>> 83757ab01048e3fe68caadca1e4dfb24dadf343d
 import { TbMenu2 } from "react-icons/tb";
 
 const SidebarContext = createContext();
@@ -35,7 +32,6 @@ function Sidebar({ children }) {
                 className={`
                 pb-12
                 flex justify-between items-center
-<<<<<<< HEAD
                 overflow-hidden transition-all ${expanded ? "w-52 ml-3" : "w-0" }
             `}
             >
@@ -49,14 +45,6 @@ function Sidebar({ children }) {
               alt="Ícone FiveFull"
               className="w-12 h-12 mr-6"
             />
-=======
-                overflow-hidden transition-all ${expanded ? "w-52 ml-3" : "w-0"}
-            `}
-            >
-            <h4 className=" font-semibold text-[#FFFDF4] text-[1.5em] font-titillium">
-                FiveFull
-            </h4>
->>>>>>> 83757ab01048e3fe68caadca1e4dfb24dadf343d
             </div>
         </div>
        
@@ -106,4 +94,3 @@ export function SidebarItem({ icon, text, active, alert, onClick }) {
     </li>
   );
 }
-

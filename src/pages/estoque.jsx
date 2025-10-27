@@ -49,13 +49,6 @@ function Estoque() {
                     title: "Quant. min",
                     dataIndex: "quantidade_minima",
                 },
-<<<<<<< HEAD
-=======
-                {
-                    title: "Quant. total",
-                    dataIndex: "quantidade_total",
-                },
->>>>>>> 83757ab01048e3fe68caadca1e4dfb24dadf343d
                 ]}
                 dataSource={dataSource}
                 pagination={{

@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 
 import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -12,14 +11,6 @@ import Reservar from "./pages/Reservar";
 import Login from "./pages/Login";
 import Manutencoes from "./pages/manutencoes";
 import TabletPage from "./pages/TabletPage";
-=======
-import { useState } from "react";
-import { BrowserRouter } from "react-router-dom";
-import { useNavigate } from "react-router-dom"; 
-import PageContent from "./components/pageContent";
-import Appheader from "../src/components/header";
-import Sidebar, { SidebarItem } from "../src/components/sidebar";
->>>>>>> 83757ab01048e3fe68caadca1e4dfb24dadf343d
 import {
   IoHomeSharp,
   IoAddCircleOutline,
@@ -29,15 +20,9 @@ import { FaWrench } from "react-icons/fa6";
 import { ImStatsBars } from "react-icons/im";
 import { MdDelete } from "react-icons/md";
 
-<<<<<<< HEAD
 function LayoutPages() {
   const [activeItem, setActiveItem] = useState("Início");
   const navigate = useNavigate();
-=======
-function App() {
-  const [activeItem, setActiveItem] = useState("Início");
-  const navigate = useNavigate(); 
->>>>>>> 83757ab01048e3fe68caadca1e4dfb24dadf343d
 
   return (
     <div className="flex flex-col w-screen h-screen">
@@ -47,18 +32,10 @@ function App() {
           <SidebarItem
             icon={<IoHomeSharp size={20} />}
             text="Início"
-<<<<<<< HEAD
             active={activeItem === "Início"}
             onClick={() => {
               setActiveItem("Início");
               navigate("/Estoque");
-=======
-            alert
-            active={activeItem === "Início"}
-            onClick={() => {
-              setActiveItem("Início");
-              navigate("/Estoque"); 
->>>>>>> 83757ab01048e3fe68caadca1e4dfb24dadf343d
             }}
           />
           <SidebarItem
@@ -76,11 +53,7 @@ function App() {
             active={activeItem === "Manutenções"}
             onClick={() => {
               setActiveItem("Manutenções");
-<<<<<<< HEAD
               navigate("/manutencoes");
-=======
-              navigate("/manutencoes"); 
->>>>>>> 83757ab01048e3fe68caadca1e4dfb24dadf343d
             }}
           />
           <SidebarItem
@@ -110,7 +83,6 @@ function App() {
               navigate("/removeritem");
             }}
           />
-<<<<<<< HEAD
         </Sidebar>
 
         <div className="pl-[12px] flex flex-col h-full w-full overflow-auto p-4">
@@ -122,19 +94,12 @@ function App() {
             <Route path="/removeritem" element={<Deletar />} />
             <Route path="/Reservar" element={<Reservar />} />
           </Routes>
-=======
-          <hr className="my-3" />
-        </Sidebar>
-        <div className="flex-1 h-full overflow-auto p-4">
-           <PageContent />
->>>>>>> 83757ab01048e3fe68caadca1e4dfb24dadf343d
         </div>
       </div>
     </div>
   );
 }
 
-<<<<<<< HEAD
 
 
 function App() {
@@ -149,6 +114,4 @@ function App() {
   );
 }
 
-=======
->>>>>>> 83757ab01048e3fe68caadca1e4dfb24dadf343d
 export default App;
