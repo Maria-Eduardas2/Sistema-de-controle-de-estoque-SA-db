@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FaRegUserCircle } from "react-icons/fa";
-import ProfileModal from "./ProfileModal"; // ajuste o caminho conforme necessário
+import ProfileModal from "./ProfileModal"; 
 
 function Appheader() {
   const [modalAberto, setModalAberto] = useState(false);

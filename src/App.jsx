@@ -3,7 +3,7 @@ import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Appheader from "./components/header";
 import Sidebar, { SidebarItem } from "./components/sidebar";
-import Estoque from "./pages/Estoque";
+import Estoque from "./pages/estoque";
 import Movimentacoes from "./pages/Movimentacoes";
 import Cadastrar from "./pages/CadastrarItem";
 import Deletar from "./pages/removeritem";
