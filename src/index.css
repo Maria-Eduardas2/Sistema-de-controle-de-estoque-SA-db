@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'newake';
+  src: url('./font/NewakeFont-Demo.otf') format('opentype');
+}
+
+@theme{
+  --font-newake: 'newake', sans-serif;
+}
+
+:root {
+  background-color: #FFFDF4;
+}
+
+@font-face {
+  font-family: 'titillium';
+  src: url('./font/TitilliumMaps29L-400wt.otf') format('opentype');
+}
+
+@theme{
+  --font-titillium: 'titillium', sans-serif;
+}
+
+h1 {
+  font-family: 'newake';
+}
+
+h2 {
+  font-family: 'titillium';
+}
+
+/* em seu arquivo CSS */
+.ant-table-thead > tr > th {
+  background-color: #6EBBCE !important;
+  color: #FFFDF4 !important;
+  font-weight: bold;
+  font-style: bold;
+  font-family: 'titillium';
+  font-size: 18px;
+} 
