@@ -1,12 +1,102 @@
 import { useState } from "react";
-import { Typography, Form, Input, Button, Select, DatePicker } from "antd";
+import { Typography, Form, Input, Button, Select, DatePicker, message } from "antd";
 
 function CadastroDinamico() {
   const [tipo, setTipo] = useState(null);
 
-  const onFinish = (values) => {
-    console.log("Dados enviados:", values);
-  };
+const onFinish = (values) => {
+  if (tipo === "insumo") {
+    const payload = {
+      nome: values.nome,
+      marca: values.marca,
+      quantidadeTotal: 0,
+      categoria: {
+        id_categoria: parseInt(values.categoria),
+      },
+      localizacao: {
+        id_localizacao: parseInt(values.localizacao),
+      },
+    };
+
+    fetch("http://localhost:8080/api/insumos", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Erro ao cadastrar insumo");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        message.success(`Insumo "${data.nome}" cadastrado com sucesso!`);
+      })
+      .catch((err) => {
+        console.error("Erro:", err);
+        message.error("Falha ao cadastrar insumo");
+      });
+  }
+
+  if (tipo === "categoria") {
+    const payload = {
+      nome: values.nome,
+    };
+
+    fetch("http://localhost:8080/api/categorias", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Erro ao cadastrar categoria");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        message.success(`Categoria "${data.nome}" cadastrada com sucesso!`);
+      })
+      .catch((err) => {
+        console.error("Erro:", err);
+        message.error("Falha ao cadastrar categoria");
+      });
+  }
+
+  if (tipo === "localizacao") {
+    const payload = {
+      nome: values.nome,
+    };
+
+    fetch("http://localhost:8080/api/localizacoes", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Erro ao cadastrar localização");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        message.success(`Localização "${data.nome}" cadastrada com sucesso!`);
+      })
+      .catch((err) => {
+        console.error("Erro:", err);
+        message.error("Falha ao cadastrar localização");
+      });
+  }
+
+  console.log("Dados enviados:", values);
+};
+
 
   return (
     <>
@@ -17,62 +107,58 @@ function CadastroDinamico() {
       </div>
 
       <div className="flex justify-center items-center p-4">
-         <div className="w-full bg-[#FFFDF4] p-9 rounded shadow-md ">
-            <Select
-              className="font-bold text-sm font-titillium color-[#345DBD]
-              rounded-none border-gray-300 focus:border-[#345DBD] focus:shadow-none"
-              placeholder="Selecione o tipo de item"
-              onChange={(value) => setTipo(value)}
-              style={{ width: 300, marginBottom: 24 }}
-            >
-              <Select.Option value="insumo">Insumo</Select.Option>
-              <Select.Option value="categoria">Categoria</Select.Option>
-              <Select.Option value="localizacao">Localização</Select.Option>
-              <Select.Option value="Manutenção">Manutenção</Select.Option>
-            </Select>
+        <div className="w-full bg-[#FFFDF4] p-9 rounded shadow-md ">
+          <Select
+            className="font-bold text-sm font-titillium color-[#345DBD] rounded-none border-gray-300 focus:border-[#345DBD] focus:shadow-none"
+            placeholder="Selecione o tipo de item"
+            onChange={(value) => setTipo(value)}
+            style={{ width: 300, marginBottom: 24 }}
+          >
+            <Select.Option value="insumo">Insumo</Select.Option>
+            <Select.Option value="categoria">Categoria</Select.Option>
+            <Select.Option value="localizacao">Localização</Select.Option>
+            <Select.Option value="Manutenção">Manutenção</Select.Option>
+          </Select>
 
-            {tipo && (
-              <Form layout="vertical" onFinish={onFinish}>
-                {tipo === "insumo" && (
-                  <>
-                    <Form.Item
-                      label={<span className="font-bold text-sm font-titillium text-[#345DBD]">Nome</span>}
-                      name="nome"
-                      rules={[{ required: true, message: "Campo obrigatório" }]}
-                    >
-                      <Input className="rounded-none border-gray-300 focus:border-[#345DBD] focus:shadow-none"
-                      />
-                    </Form.Item>
+          {tipo && (
+            <Form layout="vertical" onFinish={onFinish}>
+              {tipo === "insumo" && (
+                <>
+                  <Form.Item
+                    label={<span className="font-bold text-sm font-titillium text-[#345DBD]">Nome</span>}
+                    name="nome"
+                    rules={[{ required: true, message: "Campo obrigatório" }]}
+                  >
+                    <Input className="rounded-none border-gray-300 focus:border-[#345DBD] focus:shadow-none" />
+                  </Form.Item>
 
-                    <Form.Item
-                      label={<span className="font-bold text-sm font-titillium text-[#345DBD]">Marca</span>}
-                      name="marca"
-                      rules={[{ required: true, message: "Campo obrigatório" }]}
-                    >
-                      <Input className="rounded-none border-gray-300 focus:border-[#345DBD] focus:shadow-none"
-                      />
-                    </Form.Item>
+                  <Form.Item
+                    label={<span className="font-bold text-sm font-titillium text-[#345DBD]">Marca</span>}
+                    name="marca"
+                    rules={[{ required: true, message: "Campo obrigatório" }]}
+                  >
+                    <Input className="rounded-none border-gray-300 focus:border-[#345DBD] focus:shadow-none" />
+                  </Form.Item>
 
-                    <Form.Item
-                      label={<span className="font-bold text-sm font-titillium text-[#345DBD]">Categoria</span>}
-                      name="categoria"
-                      rules={[{ required: true, message: "Campo obrigatório" }]}
-                    >
-                      <Input className="rounded-none border-gray-300 focus:border-[#345DBD] focus:shadow-none"
-                      />
-                    </Form.Item>
+                  <Form.Item
+                    label={<span className="font-bold text-sm font-titillium text-[#345DBD]">Categoria (ID)</span>}
+                    name="categoria"
+                    rules={[{ required: true, message: "Campo obrigatório" }]}
+                  >
+                    <Input type="number" className="rounded-none border-gray-300 focus:border-[#345DBD] focus:shadow-none" />
+                  </Form.Item>
 
-                    <Form.Item
-                      label={<span className="font-bold text-sm font-titillium text-[#345DBD]">Lugar armazenado</span>}
-                      name="localizacao"
-                      rules={[{ required: true, message: "Campo obrigatório" }]}
-                    >
-                      <Input className="rounded-none border-gray-300 focus:border-[#345DBD] focus:shadow-none"
-                    />
-                    </Form.Item>
-                  </>
-                )}
+                  <Form.Item
+                    label={<span className="font-bold text-sm font-titillium text-[#345DBD]">Lugar armazenado (ID)</span>}
+                    name="localizacao"
+                    rules={[{ required: true, message: "Campo obrigatório" }]}
+                  >
+                    <Input type="number" className="rounded-none border-gray-300 focus:border-[#345DBD] focus:shadow-none" />
+                  </Form.Item>
+                </>
+              )}
 
+              
                 {tipo === "categoria" && (
                   <Form.Item
                     label={<span className="font-bold text-sm font-titillium text-[#345DBD]">Nome da categoria</span>}
@@ -140,17 +226,19 @@ function CadastroDinamico() {
                   </>
                 )}
 
-                <Form.Item>
-                  <Button className="bg-[#6EBBCE] text-white rounded-none border-gray-300 focus:border-[#345DBD] focus:shadow-none" 
-                  type="primary" htmlType="submit">
-                    Cadastrar
-                  </Button>
-                </Form.Item>
-              </Form>
-            )}
-          
+              <Form.Item>
+                <Button
+                  className="bg-[#6EBBCE] text-white rounded-none border-gray-300 focus:border-[#345DBD] focus:shadow-none"
+                  type="primary"
+                  htmlType="submit"
+                >
+                  Cadastrar
+                </Button>
+              </Form.Item>
+            </Form>
+          )}
         </div>
-    </div>
+      </div>
     </>
   );
 }
