@@ -1,45 +1,45 @@
-import { Avatar, Space, Table, Typography, Tag, Progress } from "antd";
+import { Avatar, Space, Table, Typography, Tag, Progress, Button } from "antd";
 import { useEffect, useState } from "react";
+import { ReloadOutlined } from "@ant-design/icons";
 
 function Estoque() {
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState([]);
 
   useEffect(() => {
-    setLoading(true);
-    fetch("http://localhost:3001/api/estoque")
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Erro ao buscar dados do estoque");
-        }
-        return res.json();
-      })
-      .then((data) => {
-        // Formata os dados para a tabela
-        const formatado = data.map((item) => ({
-          key: item.id,
-          id: item.id,
-          insumo_id: item.insumo_id,
-          insumo_nome: item.insumo_nome,
-          insumo_marca: item.insumo_marca,
-          categoria_nome: item.categoria_nome,
-          localizacao_nome: item.localizacao_nome,
-          quantidade_disponivel: item.quantidade_disponivel,
-          quantidade_minima: item.quantidade_minima,
-          ultima_atualizacao: item.ultima_atualizacao,
-          // Calcula o status baseado na quantidade
-          status: item.quantidade_disponivel <= item.quantidade_minima ? 'critico' : 
-                 item.quantidade_disponivel <= item.quantidade_minima * 2 ? 'alerta' : 'normal'
-        }));
-        setDataSource(formatado);
-      })
-      .catch((err) => {
-        console.error("Erro:", err);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    carregarEstoque();
   }, []);
+
+  const carregarEstoque = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch("http://localhost:3001/api/estoque");
+      if (!response.ok) {
+        throw new Error("Erro ao buscar dados do estoque");
+      }
+      const data = await response.json();
+      
+      const formatado = data.map((item) => ({
+        key: item.id,
+        id: item.id,
+        insumo_id: item.insumo_id,
+        insumo_nome: item.insumo_nome,
+        insumo_marca: item.insumo_marca,
+        categoria_nome: item.categoria_nome,
+        localizacao_nome: item.localizacao_nome,
+        quantidade_disponivel: item.quantidade_disponivel,
+        quantidade_minima: item.quantidade_minima,
+        ultima_atualizacao: item.ultima_atualizacao,
+        status: item.quantidade_disponivel <= item.quantidade_minima ? 'critico' : 
+                item.quantidade_disponivel <= item.quantidade_minima * 2 ? 'alerta' : 'normal'
+      }));
+      setDataSource(formatado);
+    } catch (error) {
+      console.error("Erro:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Colunas da tabela
   const columns = [
@@ -65,7 +65,14 @@ function Estoque() {
       title: "Categoria",
       dataIndex: "categoria_nome",
       render: (categoria) => (
-        <Tag color="blue" style={{ border: 'none' }}>
+        <Tag 
+          style={{ 
+            border: '1px solid #6EBBCE',
+            background: 'transparent',
+            color: '#345DBD',
+            fontWeight: 'bold'
+          }}
+        >
           {categoria || 'Sem categoria'}
         </Tag>
       ),
@@ -74,7 +81,14 @@ function Estoque() {
       title: "Localização",
       dataIndex: "localizacao_nome",
       render: (localizacao) => (
-        <Tag color="green" style={{ border: 'none' }}>
+        <Tag 
+          style={{ 
+            border: '1px solid #6EBBCE',
+            background: 'transparent',
+            color: '#345DBD',
+            fontWeight: 'bold'
+          }}
+        >
           {localizacao || 'Sem localização'}
         </Tag>
       ),
@@ -85,7 +99,7 @@ function Estoque() {
       render: (quantidade, record) => (
         <div style={{ minWidth: 120 }}>
           <div style={{ marginBottom: 4 }}>
-            <span style={{ fontWeight: 'bold', fontSize: '16px' }}>{quantidade}</span>
+            <span style={{ fontWeight: 'bold', fontSize: '16px', color: '#345DBD' }}>{quantidade}</span>
             <span style={{ fontSize: '12px', color: '#666', marginLeft: 4 }}>
               / mín: {record.quantidade_minima}
             </span>
@@ -93,10 +107,10 @@ function Estoque() {
           <Progress 
             percent={Math.min((quantidade / (record.quantidade_minima * 3)) * 100, 100)}
             size="small"
-            status={
-              record.status === 'critico' ? 'exception' : 
-              record.status === 'alerta' ? 'active' : 'normal'
-            }
+            strokeColor={{
+              '0%': '#6EBBCE',
+              '100%': '#345DBD',
+            }}
             showInfo={false}
           />
         </div>
@@ -107,14 +121,36 @@ function Estoque() {
       dataIndex: "status",
       render: (status) => {
         const config = {
-          critico: { color: 'red', text: 'Crítico' },
-          alerta: { color: 'orange', text: 'Alerta' },
-          normal: { color: 'green', text: 'Normal' }
+          critico: { 
+            color: '#345DBD', 
+            background: 'transparent',
+            border: '1px solid #345DBD',
+            text: 'Crítico' 
+          },
+          alerta: { 
+            color: '#345DBD', 
+            background: 'transparent',
+            border: '1px solid #6EBBCE', 
+            text: 'Alerta' 
+          },
+          normal: { 
+            color: '#345DBD', 
+            background: 'transparent',
+            border: '1px solid #6EBBCE',
+            text: 'Normal' 
+          }
         };
         
         const current = config[status] || config.normal;
         return (
-          <Tag color={current.color} style={{ border: 'none', fontWeight: 'bold' }}>
+          <Tag 
+            style={{ 
+              border: current.border,
+              background: current.background,
+              color: current.color,
+              fontWeight: 'bold'
+            }}
+          >
             {current.text}
           </Tag>
         );
@@ -131,6 +167,26 @@ function Estoque() {
       </div>
 
       <div className="bg-white p-6 rounded-xl shadow-lg">
+        <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Typography.Text strong style={{ color: '#345DBD' }}>
+            Total: {dataSource.length} itens em estoque
+          </Typography.Text>
+          <Button 
+            type="primary" 
+            onClick={carregarEstoque}
+            loading={loading}
+            icon={<ReloadOutlined />}
+            style={{
+              background: '#6EBBCE',
+              borderColor: '#6EBBCE',
+              color: 'white',
+              borderRadius: '0px'
+            }}
+          >
+            Atualizar
+          </Button>
+        </div>
+
         <Table
           loading={loading}
           columns={columns}

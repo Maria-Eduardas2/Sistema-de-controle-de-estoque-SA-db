@@ -1,12 +1,15 @@
-import { Typography, Form, Input, Button, Select, message } from "antd";
+import { Typography, Form, Input, Button, message, Modal } from "antd";
 import { useState, useEffect } from "react";
 import fflogo from "../assets/fflogo.png";
 
 function TabletPage() {
   const [loading, setLoading] = useState(false);
+  const [validandoReserva, setValidandoReserva] = useState(false);
   const [insumos, setInsumos] = useState([]);
   const [instrutores, setInstrutores] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
   const [form] = Form.useForm();
+  const [formReserva] = Form.useForm();
 
   const API_BASE = "http://localhost:3001/api";
 
@@ -33,7 +36,6 @@ function TabletPage() {
       }
     } catch (error) {
       console.error("Erro ao carregar dados:", error);
-      message.error("Erro ao carregar dados");
     }
   };
 
@@ -55,7 +57,7 @@ function TabletPage() {
       const payload = {
         id_instructor: instrutor.id_instrutores,
         id_insumo: insumo.id_insumo,
-        tipo: tipo, // 'entrada' para devolver, 'saida' para retirar
+        tipo: tipo,
         quantidade: parseInt(values.quantidade)
       };
 
@@ -69,13 +71,20 @@ function TabletPage() {
         body: JSON.stringify(payload),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `Erro ao realizar ${tipo}`);
+      const responseText = await response.text();
+      let data;
+      
+      try {
+        data = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error("Resposta não é JSON:", responseText);
+        throw new Error(`Erro no servidor: ${response.status} ${response.statusText}`);
       }
 
-      const data = await response.json();
-      
+      if (!response.ok) {
+        throw new Error(data.error || `Erro ao realizar ${tipo}`);
+      }
+
       if (tipo === 'saida') {
         message.success(`Retirada de ${values.quantidade} ${values.insumo} realizada com sucesso!`);
       } else {
@@ -92,21 +101,53 @@ function TabletPage() {
     }
   };
 
+  const validarReserva = async (values) => {
+    setValidandoReserva(true);
+    try {
+      console.log("Validando reserva:", values.codigo_reserva);
+
+      // Buscar reserva pelo código
+      const response = await fetch(`${API_BASE}/reservas`);
+      
+      if (!response.ok) {
+        throw new Error("Erro ao buscar reservas");
+      }
+
+      const reservas = await response.json();
+      const reserva = reservas.find(r => r.codigo_reserva === values.codigo_reserva);
+
+      if (!reserva) {
+        throw new Error("Código de reserva não encontrado");
+      }
+
+      if (reserva.status !== 'pendente') {
+        throw new Error(`Esta reserva já foi ${reserva.status === 'confirmada' ? 'confirmada' : 'cancelada'}`);
+      }
+
+      // Preencher automaticamente o formulário principal com os dados da reserva
+      form.setFieldsValue({
+        ra: reserva.instrutor_ra || '',
+        insumo: reserva.insumo_nome || '',
+        quantidade: reserva.quantidade || ''
+      });
+
+      message.success(`Reserva ${values.codigo_reserva} validada! Preencha a senha para confirmar.`);
+      setModalVisible(false);
+      
+    } catch (error) {
+      console.error("Erro ao validar reserva:", error);
+      message.error(error.message);
+    } finally {
+      setValidandoReserva(false);
+    }
+  };
+
   const onFinishRetirar = (values) => {
     realizarMovimentacao(values, 'saida');
   };
 
   const onFinishDevolver = (values) => {
     realizarMovimentacao(values, 'entrada');
-  };
-
-  // Função para buscar sugestões de insumos
-  const buscarSugestoesInsumos = (searchText) => {
-    return insumos
-      .filter(insumo => 
-        insumo.nome.toLowerCase().includes(searchText.toLowerCase())
-      )
-      .map(insumo => insumo.nome);
   };
 
   return (
@@ -116,11 +157,9 @@ function TabletPage() {
       </Typography.Title>
 
       <div className="bg-white w-full max-w-md p-6 rounded-lg shadow-md space-y-4">
-        {/* Formulário para Retirar */}
         <Form 
           form={form}
           layout="vertical" 
-          onFinish={onFinishRetirar}
           disabled={loading}
         >
           <Form.Item
@@ -128,20 +167,10 @@ function TabletPage() {
             name="ra"
             rules={[{ required: true, message: "Campo obrigatório" }]}
           >
-            <Select
-              showSearch
-              placeholder="Digite ou selecione o RA"
-              optionFilterProp="children"
-              filterOption={(input, option) =>
-                option.children.toLowerCase().includes(input.toLowerCase())
-              }
-            >
-              {instrutores.map(instrutor => (
-                <Select.Option key={instrutor.ra} value={instrutor.ra}>
-                  {instrutor.ra} - {instrutor.nome}
-                </Select.Option>
-              ))}
-            </Select>
+            <Input 
+              placeholder="Digite o RA do instrutor"
+              className="rounded-none border-gray-300 focus:border-[#345DBD] focus:shadow-none"
+            />
           </Form.Item>
 
           <Form.Item
@@ -149,20 +178,10 @@ function TabletPage() {
             name="insumo"
             rules={[{ required: true, message: "Campo obrigatório" }]}
           >
-            <Select
-              showSearch
-              placeholder="Digite ou selecione o insumo"
-              optionFilterProp="children"
-              filterOption={(input, option) =>
-                option.children.toLowerCase().includes(input.toLowerCase())
-              }
-            >
-              {insumos.map(insumo => (
-                <Select.Option key={insumo.id_insumo} value={insumo.nome}>
-                  {insumo.nome} {insumo.marca && `(${insumo.marca})`}
-                </Select.Option>
-              ))}
-            </Select>
+            <Input 
+              placeholder="Digite o nome do insumo"
+              className="rounded-none border-gray-300 focus:border-[#345DBD] focus:shadow-none"
+            />
           </Form.Item>
 
           <Form.Item
@@ -173,40 +192,104 @@ function TabletPage() {
             <Input
               type="number"
               min={1}
-              className="rounded-none border-gray-300 focus:border-[#345DBD] focus:shadow-none"
               placeholder="Quantidade"
+              className="rounded-none border-gray-300 focus:border-[#345DBD] focus:shadow-none"
             />
           </Form.Item>
 
-          <div className="flex justify-between mt-6">
+          <div className="flex justify-between mt-4">
             <Button
               type="primary"
-              className="bg-[#ff4d4f] text-white rounded-none hover:bg-[#d9363e] w-[48%]"
-              htmlType="submit"
+              className="bg-[#6EBBCE] text-white rounded-none hover:bg-[#58AAB9] w-[48%] h-12 text-lg font-bold"
               loading={loading}
-              onClick={() => form.setFieldsValue({ _action: 'retirar' })}
+              onClick={() => {
+                form.validateFields()
+                  .then(values => onFinishRetirar(values))
+                  .catch(() => message.error("Preencha todos os campos corretamente"));
+              }}
             >
-              Retirar
+              RETIRAR
             </Button>
             
             <Button
               type="primary"
-              className="bg-[#52c41a] text-white rounded-none hover:bg-[#389e0d] w-[48%]"
+              className="bg-[#6EBBCE] text-white rounded-none hover:bg-[#58AAB9] w-[48%] h-12 text-lg font-bold"
               loading={loading}
               onClick={() => {
-                const values = form.getFieldsValue();
-                if (values.ra && values.insumo && values.quantidade) {
-                  onFinishDevolver(values);
-                } else {
-                  message.error("Preencha todos os campos primeiro");
-                }
+                form.validateFields()
+                  .then(values => onFinishDevolver(values))
+                  .catch(() => message.error("Preencha todos os campos corretamente"));
               }}
             >
-              Devolver
+              DEVOLVER
+            </Button>
+          </div>
+
+          {/* Botão para validar reserva */}
+          <div className="mt-4">
+            <Button
+              type="primary"
+              className="bg-[#6EBBCE] text-white rounded-none hover:bg-[#58AAB9] w-full h-12 text-lg font-bold"
+              onClick={() => setModalVisible(true)}
+            >
+               VALIDAR RESERVA
             </Button>
           </div>
         </Form>
       </div>
+
+      {/* Modal para validar reserva */}
+      <Modal
+        title="Validar Reserva"
+        visible={modalVisible}
+        onCancel={() => {
+          setModalVisible(false);
+          formReserva.resetFields();
+        }}
+        footer={null}
+        centered
+      >
+        <Form
+          form={formReserva}
+          layout="vertical"
+          onFinish={validarReserva}
+          disabled={validandoReserva}
+        >
+          <Form.Item
+            label="Código da Reserva"
+            name="codigo_reserva"
+            rules={[{ required: true, message: "Digite o código da reserva" }]}
+          >
+            <Input 
+              placeholder="Ex: RES1761732474980"
+              className="rounded-none border-gray-300 focus:border-[#345DBD]"
+              size="large"
+            />
+          </Form.Item>
+
+          <Form.Item>
+            <div className="flex justify-between gap-2">
+              <Button
+                onClick={() => {
+                  setModalVisible(false);
+                  formReserva.resetFields();
+                }}
+                className="w-1/2 rounded-none border-[#6EBBCE] text-[#6EBBCE] hover:border-[#58AAB9] hover:text-[#58AAB9]"
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={validandoReserva}
+                className="bg-[#6EBBCE] border-[#6EBBCE] text-white w-1/2 rounded-none hover:bg-[#58AAB9]"
+              >
+                Validar
+              </Button>
+            </div>
+          </Form.Item>
+        </Form>
+      </Modal>
 
       <div className="flex items-center mt-10">
         <span className="text-2xl font-bold text-white font-titillium">
